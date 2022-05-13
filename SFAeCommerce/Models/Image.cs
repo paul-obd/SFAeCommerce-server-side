@@ -21,5 +21,7 @@ namespace SFAeCommerce.Models
         public DateTime DateAdded { get; set; }
         public DateTime LastEdited { get; set; }
         public string UserCode { get; set; }
+
+        public virtual Item OwnerCodeNavigation { get; set; }
     }
 }

@@ -143,6 +143,12 @@ namespace SFAeCommerce.Models
                 entity.Property(e => e.ParentAttributeValueCode)
                     .HasMaxLength(50)
                     .HasColumnName("parent_attribute_value_code");
+
+                entity.HasOne(d => d.AttributeCodeNavigation)
+                    .WithMany(p => p.AttributeValues)
+                    .HasForeignKey(d => d.AttributeCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_attribute_value_attribute");
             });
 
             modelBuilder.Entity<AttributeValueEntity>(entity =>
@@ -557,6 +563,12 @@ namespace SFAeCommerce.Models
                 entity.Property(e => e.UserCode)
                     .HasMaxLength(50)
                     .HasColumnName("user_code");
+
+                entity.HasOne(d => d.OwnerCodeNavigation)
+                    .WithMany(p => p.Images)
+                    .HasForeignKey(d => d.OwnerCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_image_item");
             });
 
             modelBuilder.Entity<Item>(entity =>

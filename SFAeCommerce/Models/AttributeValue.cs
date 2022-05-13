@@ -15,5 +15,7 @@ namespace SFAeCommerce.Models
         public bool? IsActive { get; set; }
         public DateTime DateAdded { get; set; }
         public DateTime LastEdited { get; set; }
+
+        public virtual Attribute AttributeCodeNavigation { get; set; }
     }
 }

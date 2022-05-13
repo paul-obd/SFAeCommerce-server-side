@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using SFAeCommerce.Entitties;
 using SFAeCommerce.Models;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace SFAeCommerce.Controllers
         {
             try
             {
-                var attributes = await _dbContext.Attributes.ToListAsync();
+                var attributes = await _dbContext.Attributes.Include("AttributeValues").ToListAsync();
                 return Ok(attributes);
             }
             catch (Exception e)
@@ -40,9 +41,45 @@ namespace SFAeCommerce.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("search-attribute-values")]
+        public async Task<IActionResult> searchAttributeValues([FromQuery]string attrCode, [FromQuery] string searchAttrValue)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(dbConnection))
+                {
+                    using (SqlCommand cmd = new SqlCommand("searchAttributeValues", con))
+                    {
 
-       
-        
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@ATTRCODE", attrCode);
+                        cmd.Parameters.AddWithValue("@ATTRVALUE", searchAttrValue);
+
+                        DataTable table = new DataTable("attributeValues");
+
+                        SqlDataAdapter spResult = new SqlDataAdapter(cmd);
+
+                        spResult.Fill(table);
+
+                        con.Open();
+
+                        await cmd.ExecuteNonQueryAsync();
+
+                        return Ok(table);
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, "Something went wrong");
+            }
+        }
+
+
+
+
 
         [HttpGet]
         [Route("attribute-values/{attributeCode}")]
@@ -80,12 +117,35 @@ namespace SFAeCommerce.Controllers
         }
 
 
-        [HttpGet]
-        [Route("attribute-value-entity/{attrValueCode}")]
-        public async Task<IActionResult> getAttributeValueEntities([FromRoute]string attrValueCode, [FromQuery]int scrolledTimes, [FromQuery]int itemsNumber)
+        [HttpPost]
+        [Route("attribute-value-entity")]
+        public async Task<IActionResult> getAttributeValueEntities([FromBody]List<string> attrValuesCode, [FromQuery]string sortBy, [FromQuery]int scrolledTimes, [FromQuery]int itemsNumber)
         {
             try
             {
+                DataTable attrValuesTable = new DataTable("attrValuesTable");
+                DataColumn dtColumn;
+                DataRow myDataRow;
+
+                dtColumn = new DataColumn();
+                dtColumn.DataType = typeof(string);
+                dtColumn.ColumnName = "attr_value_code";
+                dtColumn.Caption = "Attribute Value Code";
+                dtColumn.AutoIncrement = false;
+                dtColumn.ReadOnly = false;
+                dtColumn.Unique = false;
+                /// Add column to the DataColumnCollection.
+                attrValuesTable.Columns.Add(dtColumn);
+
+                foreach (var attr in attrValuesCode)
+                {
+                    myDataRow = attrValuesTable.NewRow();
+                    myDataRow["attr_value_code"] = attr;
+                    attrValuesTable.Rows.Add(myDataRow);
+                }
+
+
+
                 using (SqlConnection con = new SqlConnection(dbConnection))
                 {
                     using (SqlCommand cmd = new SqlCommand("getItemsByAttributeValuePagination", con))
@@ -94,9 +154,11 @@ namespace SFAeCommerce.Controllers
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@SCROLLEDTIMES", scrolledTimes);
                         cmd.Parameters.AddWithValue("@ITEMSNUMBER", itemsNumber);
-                        cmd.Parameters.AddWithValue("@ATRVALUECODE", attrValueCode);
+                        cmd.Parameters.AddWithValue("@ATRVALUESCODE", attrValuesTable);
+                        cmd.Parameters.AddWithValue("@SORTBY", sortBy);
 
                         DataTable table = new DataTable("items");
+
                         SqlDataAdapter spResult = new SqlDataAdapter(cmd);
 
                         spResult.Fill(table);
@@ -106,6 +168,7 @@ namespace SFAeCommerce.Controllers
                         await cmd.ExecuteNonQueryAsync();
 
                         return Ok(table);
+
                     }
                 }
             }

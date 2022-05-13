@@ -10,6 +10,7 @@ namespace SFAeCommerce.Models
         public Item()
         {
             AttributeValueEntities = new HashSet<AttributeValueEntity>();
+            Images = new HashSet<Image>();
             ItemPriceLists = new HashSet<ItemPriceList>();
             WarehouseCurrentStocks = new HashSet<WarehouseCurrentStock>();
         }
@@ -38,6 +39,7 @@ namespace SFAeCommerce.Models
         public bool IsNew { get; set; }
 
         public virtual ICollection<AttributeValueEntity> AttributeValueEntities { get; set; }
+        public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<ItemPriceList> ItemPriceLists { get; set; }
         public virtual ICollection<WarehouseCurrentStock> WarehouseCurrentStocks { get; set; }
     }

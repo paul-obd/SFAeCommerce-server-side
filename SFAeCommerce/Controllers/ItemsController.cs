@@ -28,7 +28,7 @@ namespace SFAeCommerce.Controllers
 
         [HttpGet]
         [Route("all-items")]
-        public async Task<IActionResult> getAllItems([FromQuery]int scrolledTimes, [FromQuery]int itemsNumber)
+        public async Task<IActionResult> getAllItems([FromQuery]string sortBy, [FromQuery]int scrolledTimes, [FromQuery]int itemsNumber)
         {
             try
             {
@@ -40,6 +40,7 @@ namespace SFAeCommerce.Controllers
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@SCROLLEDTIMES", scrolledTimes);
                         cmd.Parameters.AddWithValue("@ITEMSNUMBER", itemsNumber);
+                        cmd.Parameters.AddWithValue("@SORTBY", sortBy);
 
                         DataTable table = new DataTable("items");
                         SqlDataAdapter spResult = new SqlDataAdapter(cmd);
@@ -63,7 +64,7 @@ namespace SFAeCommerce.Controllers
 
         [HttpGet]
         [Route("search/{searchVar}")]
-        public async Task<IActionResult> SearchAnItemWithPagination([FromRoute]string searchVar, [FromQuery] int scrolledTimes, [FromQuery] int itemsNumber)
+        public async Task<IActionResult> SearchAnItemWithPagination([FromRoute]string searchVar, [FromQuery] string sortBy, [FromQuery] int scrolledTimes, [FromQuery] int itemsNumber)
         {
             try
             {
@@ -77,9 +78,10 @@ namespace SFAeCommerce.Controllers
                         cmd.Parameters.AddWithValue("@SCROLLEDTIMES", scrolledTimes);
                         cmd.Parameters.AddWithValue("@ITEMSNUMBER", itemsNumber);
                         cmd.Parameters.AddWithValue("@SEARCHVAR", searchVar);
+                        cmd.Parameters.AddWithValue("@SORTBY", sortBy);
 
                         DataTable table = new DataTable("items");
-                        SqlDataAdapter spResult = new SqlDataAdapter(cmd);
+                        SqlDataAdapter spResult = new SqlDataAdapter(cmd); 
 
                         spResult.Fill(table);
 

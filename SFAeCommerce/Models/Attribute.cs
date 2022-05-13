@@ -7,6 +7,11 @@ namespace SFAeCommerce.Models
 {
     public partial class Attribute
     {
+        public Attribute()
+        {
+            AttributeValues = new HashSet<AttributeValue>();
+        }
+
         public string AttributeCode { get; set; }
         public string Description { get; set; }
         public string AltDescription { get; set; }
@@ -18,5 +23,7 @@ namespace SFAeCommerce.Models
         public DateTime LastEdited { get; set; }
         public int SortOrder { get; set; }
         public bool IsRequired { get; set; }
+
+        public virtual ICollection<AttributeValue> AttributeValues { get; set; }
     }
 }
