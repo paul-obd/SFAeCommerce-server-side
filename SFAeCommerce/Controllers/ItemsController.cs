@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using SFAeCommerce.Authentication;
 using SFAeCommerce.Entitties;
 using SFAeCommerce.Models;
 using System;
@@ -9,21 +11,27 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SFAeCommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "IsLoggedInPolicy")]
     public class ItemsController : ControllerBase
     {
         private readonly SFADB_ECOMMERCEContext _dbContext;
+        private readonly IAuthenticationHelpers _authHelp;
         private readonly string dbConnection;
 
-        public ItemsController(SFADB_ECOMMERCEContext dbContext, IConfiguration configuration)
+        public ItemsController(SFADB_ECOMMERCEContext dbContext, IConfiguration configuration, IAuthenticationHelpers authHelp, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
+            _authHelp = authHelp;
             dbConnection = configuration.GetConnectionString("SFADB_ECOMMERCE");
+   
         }
 
         [HttpGet]
@@ -32,6 +40,7 @@ namespace SFAeCommerce.Controllers
         {
             try
             {
+                var userCode = User.FindFirstValue(ClaimTypes.Name);
                 using (SqlConnection con = new SqlConnection(dbConnection))
                 {
                     using (SqlCommand cmd = new SqlCommand("getItemsWithDetailsAndPagination", con))
@@ -240,5 +249,7 @@ namespace SFAeCommerce.Controllers
             }
         }
 
+
+        
     }
 }

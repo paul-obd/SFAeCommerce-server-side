@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using SFAeCommerce.Authentication;
 using SFAeCommerce.Entitties;
 using SFAeCommerce.Models;
 using System;
@@ -9,21 +11,27 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SFAeCommerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "IsLoggedInPolicy")]
     public class AttributesController : ControllerBase
     {
         private readonly SFADB_ECOMMERCEContext _dbContext;
         private readonly string dbConnection;
+        private readonly IAuthenticationHelpers _authHelp;
 
-        public AttributesController(SFADB_ECOMMERCEContext dbContext, IConfiguration configuration)
+        public AttributesController(SFADB_ECOMMERCEContext dbContext, IConfiguration configuration, IAuthenticationHelpers authHelp, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
             dbConnection = configuration.GetConnectionString("SFADB_ECOMMERCE");
+            _authHelp = authHelp;
+      
+
         }
 
         [HttpGet]

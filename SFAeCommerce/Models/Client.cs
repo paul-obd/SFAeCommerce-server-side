@@ -7,6 +7,11 @@ namespace SFAeCommerce.Models
 {
     public partial class Client
     {
+        public Client()
+        {
+            ClientSessions = new HashSet<ClientSession>();
+        }
+
         public string ClientCode { get; set; }
         public string ErpClientCode { get; set; }
         public string Description { get; set; }
@@ -31,5 +36,9 @@ namespace SFAeCommerce.Models
         public string DefaultUserCode { get; set; }
         public int BillingAddressType { get; set; }
         public int? UniqueIdentifier { get; set; }
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
+
+        public virtual ICollection<ClientSession> ClientSessions { get; set; }
     }
 }

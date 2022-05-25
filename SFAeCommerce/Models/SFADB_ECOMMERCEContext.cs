@@ -23,6 +23,7 @@ namespace SFAeCommerce.Models
         public virtual DbSet<Client> Clients { get; set; }
         public virtual DbSet<ClientCriteriaValue> ClientCriteriaValues { get; set; }
         public virtual DbSet<ClientCriteriaValueClient> ClientCriteriaValueClients { get; set; }
+        public virtual DbSet<ClientSession> ClientSessions { get; set; }
         public virtual DbSet<Criterion> Criteria { get; set; }
         public virtual DbSet<Currency> Currencies { get; set; }
         public virtual DbSet<Image> Images { get; set; }
@@ -299,6 +300,10 @@ namespace SFAeCommerce.Models
                     .HasMaxLength(50)
                     .HasColumnName("parent_client_code");
 
+                entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
+
+                entity.Property(e => e.PasswordSalt).HasColumnName("password_salt");
+
                 entity.Property(e => e.StatusId)
                     .HasColumnName("status_id")
                     .HasDefaultValueSql("((1))");
@@ -396,6 +401,26 @@ namespace SFAeCommerce.Models
                 entity.Property(e => e.NextCriteriaValueEndDate).HasColumnName("next_criteria_value_end_date");
 
                 entity.Property(e => e.NextCriteriaValueStartDate).HasColumnName("next_criteria_value_start_date");
+            });
+
+            modelBuilder.Entity<ClientSession>(entity =>
+            {
+                entity.ToTable("Client_Session");
+
+                entity.Property(e => e.ClientSessionId).HasColumnName("client_session_id");
+
+                entity.Property(e => e.ClientCode)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("client_code");
+
+                entity.Property(e => e.IsLoggedIn).HasColumnName("is_logged_in");
+
+                entity.HasOne(d => d.ClientCodeNavigation)
+                    .WithMany(p => p.ClientSessions)
+                    .HasForeignKey(d => d.ClientCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Client_Session_Client_Session");
             });
 
             modelBuilder.Entity<Criterion>(entity =>
