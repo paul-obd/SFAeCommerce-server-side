@@ -127,7 +127,7 @@ namespace SFAeCommerce.Controllers
 
         [HttpPost]
         [Route("attribute-value-entity")]
-        public async Task<IActionResult> getAttributeValueEntities([FromBody]List<string> attrValuesCode, [FromQuery]string sortBy, [FromQuery]int scrolledTimes, [FromQuery]int itemsNumber)
+        public async Task<IActionResult> getItemsByAttributeValuePagination([FromBody]List<string> attrValuesCode, [FromQuery]string sortBy, [FromQuery]int scrolledTimes, [FromQuery]int itemsNumber)
         {
             try
             {

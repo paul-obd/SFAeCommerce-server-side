@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SFAeCommerce.Authentication;
 using SFAeCommerce.Models;
+using SFAeCommerce.services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,8 @@ namespace SFAeCommerce
             services.AddCors();
             services.AddTransient<IAuthenticationHelpers, AuthenticationHelpers>();
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<ICarousel, services.Carousel>();
+            services.AddTransient<ICompanyInfo, services.CompanyInfo>();
 
             services.AddDbContext<SFADB_ECOMMERCEContext>(
                 options =>

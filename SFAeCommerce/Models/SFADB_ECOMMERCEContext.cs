@@ -20,10 +20,12 @@ namespace SFAeCommerce.Models
         public virtual DbSet<Attribute> Attributes { get; set; }
         public virtual DbSet<AttributeValue> AttributeValues { get; set; }
         public virtual DbSet<AttributeValueEntity> AttributeValueEntities { get; set; }
+        public virtual DbSet<Carousel> Carousels { get; set; }
         public virtual DbSet<Client> Clients { get; set; }
         public virtual DbSet<ClientCriteriaValue> ClientCriteriaValues { get; set; }
         public virtual DbSet<ClientCriteriaValueClient> ClientCriteriaValueClients { get; set; }
         public virtual DbSet<ClientSession> ClientSessions { get; set; }
+        public virtual DbSet<CompanyInfo> CompanyInfos { get; set; }
         public virtual DbSet<Criterion> Criteria { get; set; }
         public virtual DbSet<Currency> Currencies { get; set; }
         public virtual DbSet<Image> Images { get; set; }
@@ -203,6 +205,29 @@ namespace SFAeCommerce.Models
                     .HasForeignKey(d => d.EntityCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_attribute_value_entity_item");
+            });
+
+            modelBuilder.Entity<Carousel>(entity =>
+            {
+                entity.HasKey(e => e.CarouselImageId);
+
+                entity.ToTable("carousel");
+
+                entity.Property(e => e.CarouselImageId).HasColumnName("carousel_image_id");
+
+                entity.Property(e => e.BasePath)
+                    .IsRequired()
+                    .HasColumnName("base_path");
+
+                entity.Property(e => e.FolderPath)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("folder_path");
+
+                entity.Property(e => e.PhysicalFileName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("physical_file_name");
             });
 
             modelBuilder.Entity<Client>(entity =>
@@ -421,6 +446,46 @@ namespace SFAeCommerce.Models
                     .HasForeignKey(d => d.ClientCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Client_Session_Client_Session");
+            });
+
+            modelBuilder.Entity<CompanyInfo>(entity =>
+            {
+                entity.ToTable("company_info");
+
+                entity.Property(e => e.CompanyInfoId).HasColumnName("company_info_id");
+
+                entity.Property(e => e.CompanyName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("company_name");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasColumnName("email");
+
+                entity.Property(e => e.FacebookLink).HasColumnName("facebook_link");
+
+                entity.Property(e => e.InstagramLink).HasColumnName("instagram_link");
+
+                entity.Property(e => e.Latitude)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("latitude");
+
+                entity.Property(e => e.LinkedinLink).HasColumnName("linkedin_link");
+
+                entity.Property(e => e.Location).HasColumnName("location");
+
+                entity.Property(e => e.Longitude)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("longitude");
+
+                entity.Property(e => e.Phone1).HasColumnName("phone_1");
+
+                entity.Property(e => e.Phone2).HasColumnName("phone_2");
+
+                entity.Property(e => e.TwitterLink).HasColumnName("twitter_link");
             });
 
             modelBuilder.Entity<Criterion>(entity =>
